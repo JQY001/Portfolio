@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Proyek | Ryvaldhi Dzacky</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f0f0f;
+            --secondary: #1a1a1a;
+            --bg-card: #1e1e1e;
+            --bg-section: #141414;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2a2a2a;
+            --border-light: #3a3a3a;
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.5);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-primary);
+            background: var(--primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 15, 15, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i { color: var(--accent-light); font-size: 1.6rem; }
+        .logo span { color: var(--accent-light); }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .btn-back:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-light);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .content { padding: 120px 0 80px; min-height: 100vh; }
+
+        .gallery-container {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 32px;
+            background: var(--secondary);
+        }
+
+        .gallery-main {
+            position: relative;
+            width: 100%;
+            height: 420px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .gallery-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            background: var(--secondary);
+            transition: var(--transition);
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            opacity: 0;
+        }
+
+        .gallery-container:hover .gallery-nav { opacity: 1; }
+        .gallery-nav:hover { background: var(--accent); border-color: var(--accent); }
+        .gallery-nav.prev { left: 16px; }
+        .gallery-nav.next { right: 16px; }
+        .gallery-nav.hidden { display: none; }
+
+        .gallery-thumbs {
+            display: flex;
+            gap: 10px;
+            padding: 16px 20px;
+            overflow-x: auto;
+            background: rgba(0,0,0,0.3);
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .gallery-thumbs::-webkit-scrollbar { height: 4px; }
+        .gallery-thumbs::-webkit-scrollbar-track { background: transparent; }
+        .gallery-thumbs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        .gallery-thumb {
+            flex-shrink: 0;
+            width: 80px;
+            height: 60px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+            opacity: 0.5;
+        }
+
+        .gallery-thumb:hover { opacity: 0.8; }
+        .gallery-thumb.active { border-color: var(--accent-light); opacity: 1; }
+
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-counter {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border: 1px solid rgba(255,255,255,0.06);
+            z-index: 5;
+        }
+
+        .detail-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-meta span {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .detail-meta span i {
+            color: var(--accent-light);
+            margin-right: 8px;
+            width: 16px;
+        }
+
+        .detail-meta .badge {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-light);
+            padding: 2px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .detail-meta .badge-skripsi {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+        }
+
+        .detail-description {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 28px;
+        }
+
+        .detail-description strong { color: var(--text-primary); }
+
+        .detail-tools { margin-bottom: 24px; }
+
+        .detail-tools h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .detail-tools .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .detail-tools .tags span {
+            background: rgba(255,255,255,0.05);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .detail-tools .tags span:hover {
+            border-color: var(--accent-light);
+            color: var(--text-primary);
+        }
+
+        /* TANGGUNG JAWAB */
+        .detail-responsibility {
+            margin-bottom: 24px;
+        }
+
+        .detail-responsibility h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .detail-responsibility ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-responsibility ul li {
+            color: var(--text-secondary);
+            padding: 8px 0 8px 28px;
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .detail-responsibility ul li::before {
+            content: '▸';
+            position: absolute;
+            left: 4px;
+            color: var(--accent-light);
+        }
+
+        .detail-responsibility ul li:last-child {
+            border-bottom: none;
+        }
+
+        .detail-hasil {
+            background: var(--bg-card);
+            padding: 24px 28px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            margin-top: 8px;
+        }
+
+        .detail-hasil h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .detail-hasil p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* MODAL LIGHTBOX */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2.5rem;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            opacity: 0.6;
+        }
+
+        .modal-close:hover { opacity: 1; }
+
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            padding: 16px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .modal-nav:hover { background: rgba(255,255,255,0.2); }
+        .modal-nav.prev { left: 20px; }
+        .modal-nav.next { right: 20px; }
+        .modal-nav.hidden { display: none; }
+
+        .modal-counter {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.5);
+            padding: 6px 16px;
+            border-radius: 50px;
+        }
+
+        footer {
+            background: var(--primary);
+            color: var(--text-muted);
+            padding: 32px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        footer p { font-size: 0.9rem; }
+
+        .not-found {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .not-found h2 {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .not-found p { color: var(--text-secondary); }
+        .not-found a { color: var(--accent-light); text-decoration: none; }
+        .not-found a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .navbar .container { flex-wrap: wrap; gap: 12px; }
+            .gallery-main { height: 280px; }
+            .gallery-thumb { width: 60px; height: 45px; }
+            .gallery-nav { width: 36px; height: 36px; font-size: 1rem; opacity: 1; }
+            .gallery-nav.prev { left: 8px; }
+            .gallery-nav.next { right: 8px; }
+            .detail-content h1 { font-size: 1.8rem; }
+            .detail-meta { gap: 14px; flex-direction: column; }
+            .detail-description { font-size: 0.95rem; }
+            .detail-hasil { padding: 18px 20px; }
+            .modal { padding: 20px; }
+            .modal img { max-width: 95%; max-height: 70vh; }
+            .modal-nav { padding: 10px 14px; font-size: 1.5rem; }
+            .modal-nav.prev { left: 10px; }
+            .modal-nav.next { right: 10px; }
+            .gallery-counter { bottom: 70px; }
+            .detail-responsibility ul li { font-size: 0.9rem; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 0 16px; }
+            .content { padding: 100px 0 56px; }
+            .gallery-main { height: 200px; }
+            .gallery-thumb { width: 50px; height: 38px; }
+            .detail-content h1 { font-size: 1.4rem; }
+            .btn-back { padding: 6px 14px; font-size: 0.85rem; }
+            .logo { font-size: 1.1rem; }
+            .detail-tools .tags span { font-size: 0.75rem; padding: 4px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== NAVIGASI ===== -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-globe-asia"></i>
+                Ryvaldhi<span>GIS</span>
+            </a>
+            <a href="index.html" class="btn-back" id="backButton">
+                <i class="fas fa-arrow-left"></i> Kembali ke Portfolio
+            </a>
+        </div>
+    </nav>
+
+    <!-- ===== CONTENT ===== -->
+    <section class="content">
+        <div class="container" id="detailContent">
+            <!-- Akan diisi oleh JavaScript -->
+        </div>
+    </section>
+
+    <!-- ===== MODAL LIGHTBOX ===== -->
+    <div class="modal" id="lightbox">
+        <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+        <button class="modal-nav prev" id="modalPrev"><i class="fas fa-chevron-left"></i></button>
+        <img id="modalImage" src="" alt="Preview">
+        <button class="modal-nav next" id="modalNext"><i class="fas fa-chevron-right"></i></button>
+        <div class="modal-counter" id="modalCounter"></div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Ryvaldhi Dzacky Andyti Sudrajat</p>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ============================================================
+        // DATA PROYEK (LENGKAP - sama dengan index.html)
+        // ============================================================
+        const projects = [
+            {
+                id: 1,
+                judul: "Peta Sebaran Pusat Perdagangan dan Jasa Kecamatan Arcamanik",
+                kategori: "Analisis Spasial",
+                lokasi: "Kecamatan Arcamanik, Kota Bandung",
+                tahun: "2024",
+                deskripsi: "Proyek ini menyajikan sebaran kawasan perdagangan dan jasa yang terintegrasi dengan jaringan jalan di Kecamatan Arcamanik. Pemetaan dilakukan melalui proses digitasi, pengelolaan data spasial, serta penyusunan layout peta yang informatif untuk mendukung analisis tata ruang.",
+                tools: ["ArcMap", "ArcGIS Pro"],
+                hasil: "Menghasilkan peta sebaran perdagangan dan jasa yang dapat dimanfaatkan sebagai pendukung evaluasi pola ruang serta analisis kawasan komersial.",
+                tanggung_jawab: [
+                    "Melakukan digitasi objek spasial",
+                    "Mengelola data atribut",
+                    "Menyusun simbolisasi peta",
+                    "Membuat layout peta"
+                ],
+                gambar: "img/proyek/1-arcamanik/cover.jpg",
+                galeri: [
+                    "img/proyek/1-arcamanik/cover.jpg",
+                    "img/proyek/1-arcamanik/peta-1.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 2,
+                judul: "Peta Rawan Longsor Kabupaten Garut",
+                kategori: "Analisis Spasial",
+                lokasi: "Kabupaten Garut, Jawa Barat",
+                tahun: "2024",
+                deskripsi: "Proyek ini merupakan analisis spasial untuk mengidentifikasi tingkat kerawanan longsor di Kabupaten Garut menggunakan pendekatan Multi-Criteria Decision Analysis (MCDA). Analisis dilakukan dengan menggabungkan beberapa parameter lingkungan melalui proses pembobotan dan overlay spasial.",
+                tools: ["ArcGIS Pro", "QGIS", "AHP"],
+                hasil: "Menghasilkan peta kerawanan longsor yang mengelompokkan wilayah ke dalam lima tingkat risiko sebagai pendukung mitigasi bencana dan perencanaan wilayah.",
+                tanggung_jawab: [
+                    "Mengolah data spasial dari berbagai parameter",
+                    "Melakukan pembobotan dan analisis overlay",
+                    "Mengklasifikasikan rawan longsor",
+                    "Menyusun layout peta"
+                ],
+                gambar: "img/proyek/2-garut/cover.jpg",
+                galeri: [
+                    "img/proyek/2-garut/cover.jpg",
+                    "img/proyek/2-garut/peta-1.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 3,
+                judul: "Peta Tutupan Lahan Kecamatan Cisarua",
+                kategori: "Penginderaan Jauh",
+                lokasi: "Kecamatan Cisarua, Kabupaten Bandung Barat",
+                tahun: "2024",
+                deskripsi: "Proyek ini menghasilkan peta tutupan lahan yang menggambarkan kondisi penggunaan lahan di Kecamatan Cisarua pada skala 1:25.000. Proses pemetaan dilakukan melalui interpretasi citra satelit, digitasi visual, serta pengolahan data spasial untuk memperoleh representasi yang akurat sesuai batas administrasi wilayah.",
+                tools: ["ArcMap", "QGIS", "Landsat 8"],
+                hasil: "Menghasilkan peta tutupan lahan yang menampilkan klasifikasi penggunaan lahan seperti kawasan hutan, lahan terbangun, perkebunan, dan lahan basah.",
+                tanggung_jawab: [
+                    "Geoprocessing data spasial",
+                    "Penyusunan layout peta"
+                ],
+                gambar: "img/proyek/3-cisarua/cover.jpg",
+                galeri: [
+                    "img/proyek/3-cisarua/cover.jpg",
+                    "img/proyek/3-cisarua/peta-1.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 4,
+                judul: "Peta Service Area Sarana Kesehatan Berdasarkan Jalan Cilegon",
+                kategori: "Analisis Spasial",
+                lokasi: "Cilegon, Banten",
+                tahun: "2024",
+                deskripsi: "Proyek ini bertujuan untuk menganalisis jangkauan pelayanan fasilitas kesehatan di Kota Cilegon berdasarkan jaringan jalan yang sebenarnya. Analisis dilakukan menggunakan metode Network Analysis sehingga menghasilkan cakupan layanan berdasarkan jarak dan waktu tempuh aktual, bukan sekadar radius garis lurus.",
+                tools: ["ArcMap", "Network Analyst"],
+                hasil: "Menghasilkan peta jangkauan pelayanan fasilitas kesehatan yang dapat dimanfaatkan sebagai pendukung evaluasi aksesibilitas dan perencanaan penyediaan layanan publik.",
+                tanggung_jawab: [
+                    "Menyusun dan memperbaiki topologi jaringan jalan",
+                    "Melakukan analisis Service Area",
+                    "Mengolah data spasial fasilitas kesehatan",
+                    "Menyusun layout peta sesuai standar kartografi"
+                ],
+                gambar: "img/proyek/4-cilegon/cover.jpg",
+                galeri: [
+                    "img/proyek/4-cilegon/cover.jpg",
+                    "img/proyek/4-cilegon/peta-1.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 5,
+                judul: "WebGIS SI Panen - Sistem Informasi Pertanian",
+                kategori: "WebGIS",
+                lokasi: "Kabupaten Cirebon, Jawa Barat",
+                tahun: "2024",
+                deskripsi: "SI Panen merupakan aplikasi Web GIS yang dikembangkan untuk menyajikan informasi spasial secara interaktif terkait data pertanian dan lokasi lahan. Aplikasi ini memudahkan pengguna dalam mengakses, menampilkan, dan mengeksplorasi informasi geografis melalui antarmuka berbasis web yang responsif dan mudah digunakan.",
+                tools: ["Leaflet", "JavaScript", "Python", "GeoJSON"],
+                hasil: "Menghasilkan aplikasi Web GIS SI Panen yang mampu menyajikan informasi spasial secara interaktif sehingga mempermudah pengguna dalam mengakses dan memahami data geografis melalui platform berbasis web.",
+                tanggung_jawab: [
+                    "Merancang dan membangun antarmuka Web GIS",
+                    "Mengintegrasikan data spasial ke dalam aplikasi",
+                    "Menampilkan layer peta beserta informasi atribut",
+                    "Mengembangkan fitur navigasi dan interaksi peta",
+                    "Melakukan pengujian serta penyempurnaan tampilan aplikasi"
+                ],
+                gambar: "img/proyek/5-sipanen/cover.jpg",
+                galeri: [
+                    "img/proyek/5-sipanen/cover.jpg",
+                    "img/proyek/5-sipanen/dashboard-1.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 6,
+                judul: "WebGIS Aset Tanah Pemerintah Daerah",
+                kategori: "WebGIS",
+                lokasi: "Kecamatan Sumber, Kabupaten Cirebon",
+                tahun: "2024",
+                deskripsi: "WebGIS Aset Tanah Pemerintah Daerah merupakan aplikasi berbasis web yang dikembangkan untuk mendukung pengelolaan dan visualisasi data aset tanah milik pemerintah daerah secara digital. Aplikasi ini memudahkan pengguna dalam mengakses informasi lokasi aset, menampilkan data spasial secara interaktif, serta membantu proses inventarisasi dan monitoring aset melalui platform berbasis Web GIS.",
+                tools: ["QGIS", "Leaflet.js", "GeoJSON", "JavaScript"],
+                hasil: "Menghasilkan aplikasi WebGIS Aset Tanah Pemerintah Daerah yang mampu menyajikan informasi spasial aset tanah secara interaktif, sehingga mempermudah proses inventarisasi, monitoring, serta pengelolaan aset pemerintah daerah secara lebih efektif dan efisien.",
+                tanggung_jawab: [
+                    "Mengintegrasikan data spasial aset tanah ke dalam aplikasi",
+                    "Menampilkan informasi lokasi aset beserta atributnya",
+                    "Mengimplementasikan fitur interaksi peta dan pengelolaan layer"
+                ],
+                gambar: "img/proyek/6-aset-tanah/cover.jpg",
+                galeri: [
+                    "img/proyek/6-aset-tanah/cover.jpg",
+                    "img/proyek/6-aset-tanah/dashboard-1.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 7,
+                judul: "Pemodelan 3D Cadaster Menggunakan Foto Udara Drone",
+                kategori: "3D Modeling",
+                lokasi: "Kelurahan Sukapura, Kota Cirebon",
+                tahun: "2025",
+                deskripsi: "Pemodelan 3D menggunakan foto udara drone berbasis point cloud dan nDSM untuk pembuatan peta kadaster 3D yang akurat dan presisi. Proyek ini merupakan skripsi yang bertujuan untuk meningkatkan kualitas data pertanahan.",
+                tools: ["Drone", "Point Cloud", "nDSM", "CloudCompare", "Agisoft Metashape"],
+                hasil: "Model 3D bangunan dan lahan dengan tingkat akurasi tinggi untuk administrasi pertanahan.",
+                tanggung_jawab: [
+                    "Akuisisi data udara menggunakan drone",
+                    "Pengolahan point cloud dan nDSM",
+                    "Pemodelan 3D bangunan dan lahan"
+                ],
+                gambar: "img/proyek/7-3d-cadaster/cover.jpg",
+                galeri: [
+                    "img/proyek/7-3d-cadaster/cover.jpg",
+                    "img/proyek/7-3d-cadaster/model-3d.jpg",
+                    "img/proyek/7-3d-cadaster/drone.jpg"
+                ],
+                isSkripsi: true
+            },
+            {
+                id: 8,
+                judul: "Pengolahan Data Foto Udara Desa Cipada",
+                kategori: "Pemetaan",
+                lokasi: "Desa Cipada, Jawa Barat",
+                tahun: "2024",
+                deskripsi: "Pengolahan data foto udara menjadi orthomosaik dan model elevasi digital (DEM) menggunakan perangkat lunak fotogrametri. Hasilnya digunakan untuk keperluan pemetaan topografi dan perencanaan wilayah.",
+                tools: ["Agisoft Metashape", "PIX4D", "QGIS"],
+                hasil: "Orthomosaik dan DEM resolusi tinggi untuk keperluan pemetaan.",
+                tanggung_jawab: [
+                    "Pengolahan foto udara",
+                    "Pembuatan orthomosaik",
+                    "Generasi DEM"
+                ],
+                gambar: "img/proyek/8-cipada/cover.jpg",
+                galeri: [
+                    "img/proyek/8-cipada/cover.jpg",
+                    "img/proyek/8-cipada/orthomosaik.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 9,
+                judul: "Pengukuran Topografi",
+                kategori: "Survey",
+                lokasi: "Berbagai Lokasi",
+                tahun: "2023-2024",
+                deskripsi: "Pengukuran topografi detail menggunakan GPS Geodetik dan Total Station untuk berbagai keperluan pemetaan dan perencanaan konstruksi. Data yang dihasilkan digunakan untuk pembuatan peta kontur dan perencanaan teknis.",
+                tools: ["GPS Geodetik", "Total Station", "AutoCAD"],
+                hasil: "Data titik koordinat dan peta topografi untuk perencanaan.",
+                tanggung_jawab: [
+                    "Pengambilan data lapangan",
+                    "Pengolahan data ukur",
+                    "Pembuatan peta kontur"
+                ],
+                gambar: "img/proyek/9-topografi/cover.jpg",
+                galeri: [
+                    "img/proyek/9-topografi/cover.jpg",
+                    "img/proyek/9-topografi/lapangan-1.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 10,
+                judul: "Survei Topografi Sempadan Sungai",
+                kategori: "Survey",
+                lokasi: "Indramayu, Jawa Barat",
+                tahun: "2024",
+                deskripsi: "Survei topografi sempadan sungai menggunakan GPS GNSS RTK untuk mendukung proyek normalisasi sungai. Data yang diambil meliputi titik koordinat sepanjang bibir sungai dan area sekitarnya.",
+                tools: ["GPS GNSS RTK", "Total Station"],
+                hasil: "Data titik koordinat sepanjang bibir sungai untuk perencanaan normalisasi.",
+                tanggung_jawab: [
+                    "Pengambilan data GNSS RTK",
+                    "Pengukuran detail sempadan sungai"
+                ],
+                gambar: "img/proyek/10-sungai/cover.jpg",
+                galeri: [
+                    "img/proyek/10-sungai/cover.jpg",
+                    "img/proyek/10-sungai/lapangan-1.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 11,
+                judul: "Digitasi Aset Sungai BMN (Milik Negara)",
+                kategori: "Pemetaan",
+                lokasi: "Berbagai Lokasi",
+                tahun: "2024",
+                deskripsi: "Digitasi peta aset sungai milik negara (BMN) untuk inventarisasi dan pengelolaan aset negara. Proyek ini mendukung pengelolaan aset negara yang lebih transparan dan terintegrasi.",
+                tools: ["ArcGIS Pro", "QGIS", "AutoCAD"],
+                hasil: "Peta digitasi aset sungai BMN untuk inventarisasi negara.",
+                tanggung_jawab: [
+                    "Digitasi peta aset sungai",
+                    "Verifikasi data spasial",
+                    "Penyusunan peta inventarisasi"
+                ],
+                gambar: "img/proyek/11-bmn/cover.jpg",
+                galeri: [
+                    "img/proyek/11-bmn/cover.jpg",
+                    "img/proyek/11-bmn/digitasi-1.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 12,
+                judul: "Pengukuran Bidang Tanah",
+                kategori: "Survey",
+                lokasi: "Berbagai Lokasi",
+                tahun: "2023-2024",
+                deskripsi: "Pengukuran bidang tanah untuk keperluan sertifikasi dan administrasi pertanahan di BPN. Kegiatan ini mencakup pengambilan titik batas, perhitungan luasan, dan pembuatan peta bidang tanah.",
+                tools: ["GPS/GNSS", "Total Station", "AutoCAD"],
+                hasil: "Peta bidang tanah dan data koordinat untuk sertifikasi.",
+                tanggung_jawab: [
+                    "Pengukuran titik batas tanah",
+                    "Perhitungan luasan bidang",
+                    "Pembuatan peta bidang tanah"
+                ],
+                gambar: "img/proyek/12-bidang-tanah/cover.jpg",
+                galeri: [
+                    "img/proyek/12-bidang-tanah/cover.jpg",
+                    "img/proyek/12-bidang-tanah/lapangan-1.jpg"
+                ],
+                isSkripsi: false
+            },
+            {
+                id: 13,
+                judul: "Digitalisasi Sertifikat Tanah",
+                kategori: "Pemetaan",
+                lokasi: "Berbagai Lokasi",
+                tahun: "2024",
+                deskripsi: "Konversi sertifikat tanah fisik menjadi elektronik dalam program digitalisasi di BPN. Proyek ini mendukung modernisasi administrasi pertanahan dan kemudahan akses data.",
+                tools: ["Sistem Informasi Pertanahan BPN", "ArcGIS", "AutoCAD"],
+                hasil: "Sertifikat tanah elektronik terintegrasi.",
+                tanggung_jawab: [
+                    "Digitalisasi sertifikat fisik",
+                    "Verifikasi data pertanahan",
+                    "Integrasi data ke sistem BPN"
+                ],
+                gambar: "img/proyek/13-sertifikat/cover.jpg",
+                galeri: [
+                    "img/proyek/13-sertifikat/cover.jpg",
+                    "img/proyek/13-sertifikat/sistem-1.jpg"
+                ],
+                isSkripsi: false
+            }
+        ];
+
+        // ============================================================
+        // STATE GALERI
+        // ============================================================
+        let currentIndex = 0;
+        let currentGallery = [];
+
+        // ============================================================
+        // RENDER DETAIL
+        // ============================================================
+        function renderDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = parseInt(urlParams.get('id'));
+            const filter = urlParams.get('filter') || 'all';
+
+            const project = projects.find(p => p.id === id);
+
+            const backButton = document.getElementById('backButton');
+            if (backButton) {
+                backButton.href = `index.html?filter=${filter}&scroll=${id}`;
+            }
+
+            const container = document.getElementById('detailContent');
+
+            if (!project) {
+                container.innerHTML = `
+                    <div class="not-found">
+                        <h2>⚠️ Proyek Tidak Ditemukan</h2>
+                        <p>Kembali ke <a href="index.html#portfolio">halaman utama</a>.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            currentGallery = project.galeri || [project.gambar];
+            currentIndex = 0;
+
+            let thumbsHtml = '';
+            const galeri = project.galeri || [project.gambar];
+            galeri.forEach((img, idx) => {
+                thumbsHtml += `
+                    <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-index="${idx}">
+                        <img src="${img}" alt="Thumbnail ${idx + 1}">
+                    </div>
+                `;
+            });
+
+            const showNav = galeri.length > 1;
+            const navHtml = showNav ? `
+                <button class="gallery-nav prev" id="galleryPrev"><i class="fas fa-chevron-left"></i></button>
+                <button class="gallery-nav next" id="galleryNext"><i class="fas fa-chevron-right"></i></button>
+                <div class="gallery-counter">1 / ${galeri.length}</div>
+            ` : '';
+
+            // Tanggung Jawab list
+            let tanggungJawabHtml = '';
+            if (project.tanggung_jawab && project.tanggung_jawab.length > 0) {
+                tanggungJawabHtml = `
+                    <div class="detail-responsibility">
+                        <h3>📋 Tanggung Jawab</h3>
+                        <ul>
+                            ${project.tanggung_jawab.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="gallery-container" id="galleryContainer">
+                    <div class="gallery-main" id="galleryMain">
+                        <img src="${galeri[0]}" alt="${project.judul}" id="mainImage">
+                        ${navHtml}
+                    </div>
+                    <div class="gallery-thumbs" id="galleryThumbs">
+                        ${thumbsHtml}
+                    </div>
+                </div>
+                <div class="detail-content">
+                    <h1>${project.judul}</h1>
+                    <div class="detail-meta">
+                        <span><i class="fas fa-map-pin"></i> ${project.lokasi}</span>
+                        <span><i class="fas fa-calendar-alt"></i> ${project.tahun}</span>
+                        <span><i class="fas fa-tag"></i> <span class="badge">${project.kategori}</span></span>
+                        ${project.isSkripsi ? '<span><i class="fas fa-star" style="color:#fbbf24;"></i> <span class="badge badge-skripsi">⭐ Skripsi</span></span>' : ''}
+                    </div>
+                    <div class="detail-description">
+                        ${project.deskripsi}
+                    </div>
+                    ${tanggungJawabHtml}
+                    <div class="detail-tools">
+                        <h3>🛠️ Tools yang Digunakan</h3>
+                        <div class="tags">
+                            ${project.tools.map(t => `<span>${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="detail-hasil">
+                        <h3>📌 Hasil</h3>
+                        <p>${project.hasil}</p>
+                    </div>
+                </div>
+            `;
+
+            setupGallery(galeri);
+        }
+
+        // ============================================================
+        // SETUP GALERI
+        // ============================================================
+        function setupGallery(galeri) {
+            const mainImage = document.getElementById('mainImage');
+            const thumbs = document.querySelectorAll('.gallery-thumb');
+            const prevBtn = document.getElementById('galleryPrev');
+            const nextBtn = document.getElementById('galleryNext');
+            const counter = document.querySelector('.gallery-counter');
+            const galleryMain = document.getElementById('galleryMain');
+
+            if (!mainImage) return;
+
+            const updateGallery = (index) => {
+                currentIndex = index;
+                mainImage.src = galeri[index];
+                mainImage.alt = `Gambar ${index + 1}`;
+
+                thumbs.forEach((thumb, i) => {
+                    thumb.classList.toggle('active', i === index);
+                });
+
+                if (counter) {
+                    counter.textContent = `${index + 1} / ${galeri.length}`;
+                }
+
+                if (prevBtn) prevBtn.style.display = index === 0 ? 'none' : 'flex';
+                if (nextBtn) nextBtn.style.display = index === galeri.length - 1 ? 'none' : 'flex';
+            };
+
+            thumbs.forEach((thumb) => {
+                thumb.addEventListener('click', () => {
+                    const index = parseInt(thumb.dataset.index);
+                    updateGallery(index);
+                });
+            });
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (currentIndex > 0) updateGallery(currentIndex - 1);
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (currentIndex < galeri.length - 1) updateGallery(currentIndex + 1);
+                });
+            }
+
+            if (galleryMain) {
+                galleryMain.addEventListener('click', () => {
+                    openLightbox(currentIndex);
+                });
+            }
+
+            updateGallery(0);
+        }
+
+        // ============================================================
+        // LIGHTBOX
+        // ============================================================
+        function openLightbox(index) {
+            const modal = document.getElementById('lightbox');
+            const modalImg = document.getElementById('modalImage');
+            const modalPrev = document.getElementById('modalPrev');
+            const modalNext = document.getElementById('modalNext');
+            const modalCounter = document.getElementById('modalCounter');
+
+            if (!modal || !modalImg) return;
+
+            const galeri = currentGallery;
+            if (!galeri || galeri.length === 0) return;
+
+            let current = index;
+
+            const updateModal = (idx) => {
+                current = idx;
+                modalImg.src = galeri[idx];
+                modalImg.alt = `Gambar ${idx + 1}`;
+
+                if (modalCounter) {
+                    modalCounter.textContent = `${idx + 1} / ${galeri.length}`;
+                }
+
+                if (modalPrev) {
+                    modalPrev.style.display = idx === 0 ? 'none' : 'flex';
+                }
+                if (modalNext) {
+                    modalNext.style.display = idx === galeri.length - 1 ? 'none' : 'flex';
+                }
+            };
+
+            const prevHandler = () => {
+                if (current > 0) updateModal(current - 1);
+            };
+            const nextHandler = () => {
+                if (current < galeri.length - 1) updateModal(current + 1);
+            };
+
+            const newPrev = modalPrev.cloneNode(true);
+            const newNext = modalNext.cloneNode(true);
+            if (modalPrev.parentNode) modalPrev.parentNode.replaceChild(newPrev, modalPrev);
+            if (modalNext.parentNode) modalNext.parentNode.replaceChild(newNext, modalNext);
+
+            newPrev.addEventListener('click', prevHandler);
+            newNext.addEventListener('click', nextHandler);
+
+            const keyHandler = (e) => {
+                if (!modal.classList.contains('active')) return;
+                if (e.key === 'ArrowLeft') prevHandler();
+                if (e.key === 'ArrowRight') nextHandler();
+                if (e.key === 'Escape') closeLightbox();
+            };
+            document.addEventListener('keydown', keyHandler);
+
+            const closeBtn = document.getElementById('modalClose');
+            const closeHandler = () => closeLightbox();
+            closeBtn.addEventListener('click', closeHandler);
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeLightbox();
+            });
+
+            modal._cleanup = () => {
+                document.removeEventListener('keydown', keyHandler);
+                closeBtn.removeEventListener('click', closeHandler);
+            };
+
+            updateModal(index);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            const modal = document.getElementById('lightbox');
+            if (!modal) return;
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            if (modal._cleanup) modal._cleanup();
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', renderDetail);
+    </script>
+</body>
+</html>
